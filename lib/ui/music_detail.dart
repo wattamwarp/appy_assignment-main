@@ -6,6 +6,7 @@ import '../blocs/music_detail_bloc.dart';
 import '../blocs/music_detail_track_block.dart';
 import '../models/music_detail_model.dart';
 import '../models/music_detail_track_model.dart';
+import 'music_playlist.dart';
 
 class MusicDetail extends StatefulWidget {
   final int trackId;
@@ -33,6 +34,7 @@ class _MusicDetailState extends State<MusicDetail> {
   List<String> bookmarkedTracks =new List() ;
   //List a = new List();
   List<String> a ;//new List();
+  String bookMarkData;
 
   bool isConnected = true;
   TextStyle headingTextStyle =
@@ -48,6 +50,12 @@ class _MusicDetailState extends State<MusicDetail> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: ()async{
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text('Popular Music'),
       ),
       body: StreamBuilder(
@@ -75,6 +83,7 @@ class _MusicDetailState extends State<MusicDetail> {
       for (String track in a) {
         String trackId = track.split('|')[0];
         if (trackId == widget.trackId.toString()) {
+          bookMarkData = track;
           isBookmarked = true;
           break;
         }
@@ -88,8 +97,8 @@ class _MusicDetailState extends State<MusicDetail> {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       isBookmarked = true;
-      a.add(
-          "${widget.trackId.toString()}|${widget.trackName.toString()}|${widget.albumName.toString()}|${widget.artistName.toString()}");
+      bookMarkData ="${widget.trackId.toString()}|${widget.trackName.toString()}|${widget.albumName.toString()}|${widget.artistName.toString()}";
+      a.add(bookMarkData);
       print(a.last);
       sharedPreferences.setStringList('bookmarks', a);
     });
@@ -102,6 +111,10 @@ class _MusicDetailState extends State<MusicDetail> {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       isBookmarked = false;
+      a.remove(bookMarkData);
+      print("this data is removed"+bookMarkData);
+      print("the list length is"+a.length.toString());
+      bookMarkData="";
       sharedPreferences.setStringList('bookmarks', a);
     });
   }

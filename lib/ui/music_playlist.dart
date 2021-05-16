@@ -35,13 +35,17 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
   }
 
   getBookmarkList() async {
+    playlistModelList?.clear();
     sharedPreferences = await SharedPreferences.getInstance();
-    bookmarkedTracks = sharedPreferences.getStringList('bookmarks');
-    for (String track in bookmarkedTracks) {
-      List<String> trackDetails = track.split('|');
-      playlistModelList.add(PlaylistModel(
-          trackDetails[0], trackDetails[1], trackDetails[2], trackDetails[3]));
-    }
+    setState(() {
+      bookmarkedTracks = sharedPreferences.getStringList('bookmarks');
+      for (String track in bookmarkedTracks) {
+        List<String> trackDetails = track.split('|');
+        playlistModelList.add(PlaylistModel(
+            trackDetails[0], trackDetails[1], trackDetails[2], trackDetails[3]));
+      }
+    });
+
   }
 
   void checkConnectivity() async {
@@ -67,6 +71,10 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
     return Scaffold(
       backgroundColor: isConnected ? Colors.transparent : Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text('My Playlist'),
       ),
       body: isConnected
@@ -93,8 +101,8 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
       itemBuilder: (BuildContext context, int index) {
         ///Return Single Widget
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
+          onTap: () async{
+            await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
                 return MusicDetail(
@@ -105,7 +113,8 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
                   index: index,
                 );
               }),
-            );
+            ).then((value)async {
+              await getBookmarkList();});
           },
           child: Card(
             elevation: 1,

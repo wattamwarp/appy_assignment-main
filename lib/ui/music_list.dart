@@ -113,8 +113,8 @@ class _MusicListState extends State<MusicList> {
       itemBuilder: (BuildContext context, int index) {
         ///Return Single Widget
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
+          onTap: () async {
+           await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
                 return MusicDetail(
