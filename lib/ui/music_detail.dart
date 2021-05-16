@@ -38,9 +38,9 @@ class _MusicDetailState extends State<MusicDetail> {
 
   bool isConnected = true;
   TextStyle headingTextStyle =
-      TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black);
+      TextStyle(fontWeight: FontWeight.w700, fontSize: 16/*, color: Colors.black*/);
   TextStyle nonHeadingTextStyle = TextStyle(
-      fontWeight: FontWeight.w600, fontSize: 18, color: Colors.black54);
+      fontWeight: FontWeight.w600, fontSize: 18/*,color: Colors.black54*/);
 
 
   int index=-1;
@@ -48,7 +48,7 @@ class _MusicDetailState extends State<MusicDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -162,7 +162,7 @@ class _MusicDetailState extends State<MusicDetail> {
   Widget buildWidget(AsyncSnapshot<MusicDetailTrackModel> snapshot) {
     return isConnected
         ? Scaffold(
-            backgroundColor: Colors.white,
+            //backgroundColor: Colors.white,
             body: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[

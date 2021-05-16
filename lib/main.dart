@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Music Application',
-      theme: ThemeData.dark(),
+      //theme: ThemeData.dark(),
       home: Scaffold(
         body: MusicList(),
       ),

@@ -1,6 +1,10 @@
+//import 'dart:html';
+
 import 'package:connectivity/connectivity.dart';
+//import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../blocs/music_bloc.dart';
 import '../models/music_model.dart';
@@ -18,6 +22,10 @@ class _MusicListState extends State<MusicList> {
   @override
   void initState() {
     super.initState();
+
+    _switchValue??=true;
+    setThemeval(_switchValue);
+
     checkConnectivity();
     subscription = Connectivity()
         .onConnectivityChanged
@@ -52,54 +60,85 @@ class _MusicListState extends State<MusicList> {
     super.dispose();
   }
 
+  bool _switchValue ;
+
+  setThemeval(bool _switchValue ) async {
+    SharedPreferences pref= await SharedPreferences.getInstance();
+    pref.setBool("theme", _switchValue);
+    setState(() {
+      this._switchValue = _switchValue;
+    });
+
+  }
+
+  getThemeVal() async{
+    SharedPreferences pref= await SharedPreferences.getInstance();
+    setState(() {
+      _switchValue = pref.getBool("theme");
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: isConnected ? Colors.transparent : Colors.white,
-      appBar: AppBar(
-        title: Text('Popular Music'),
-        actions: <Widget>[
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return MusicPlaylist();
-                }),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Icon(
-                Icons.playlist_play,
-                size: 40,
+    return MaterialApp(
+      theme:_switchValue? ThemeData.light():ThemeData.dark(),
+      home: Scaffold(
+       // backgroundColor: isConnected ? Colors.transparent : Colors.white,
+        appBar: AppBar(
+          title: Text('Popular Music'),
+          actions: <Widget>[
+            GestureDetector(
+              onTap: () {
+                print("bookmark tapperd");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return MusicPlaylist();
+                  }),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Icon(
+                  Icons.playlist_play,
+                  size: 40,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: isConnected
-          ? StreamBuilder(
-              stream: bloc.allMusic,
-              builder: (context, AsyncSnapshot<MusicModel> snapshot) {
-                if (snapshot.hasData) {
-                  print(snapshot);
-                  return buildList(snapshot);
-                } else if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                }
-                return Center(child: CircularProgressIndicator());
+            CupertinoSwitch(
+              value: _switchValue,
+              onChanged: (value) {
+                setState(() {
+                  setThemeval(!_switchValue);
+                });
               },
-            )
-          : Center(
-              child: Text(
-              'No Internet Connection',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-                fontSize: 20,
-              ),
-            )),
+            ),
+          ],
+        ),
+        body: isConnected
+            ? StreamBuilder(
+                stream: bloc.allMusic,
+                builder: (context, AsyncSnapshot<MusicModel> snapshot) {
+                  if (snapshot.hasData) {
+                    print(snapshot);
+                    return buildList(snapshot);
+                  } else if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  }
+                  return Center(child: CircularProgressIndicator());
+                },
+              )
+            : Center(
+                child: Text(
+                'No Internet Connection',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                  fontSize: 20,
+                ),
+              )),
+      ),
     );
   }
 
@@ -150,12 +189,12 @@ class _MusicListState extends State<MusicList> {
                       Text(
                         snapshot.data.results[index].trackName,
                         style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w800),
+                            /*color: Colors.white,*/ fontWeight: FontWeight.w800),
                       ),
                       Text(
                         '- (${snapshot.data.results[index].albumName})',
                         style: TextStyle(
-                            color: Colors.white70, fontWeight: FontWeight.w500),
+                            /*color: Colors.white70,*/ fontWeight: FontWeight.w500),
                       ),
                       SizedBox(
                         height: 5,

@@ -31,7 +31,8 @@ dependencies:
   rxdart: 0.27.0
   http: 0.13.3
   connectivity: 3.0.3
-  shared_preferences: 2.0.5
+  shared_preferences:
+  #dynamic_theme:
 
 dev_dependencies:
   flutter_test:

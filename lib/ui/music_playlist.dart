@@ -7,6 +7,7 @@ import '../models/playlist_model.dart';
 import 'music_detail.dart';
 
 class MusicPlaylist extends StatefulWidget {
+
   @override
   _MusicPlaylistState createState() => _MusicPlaylistState();
 }
@@ -21,6 +22,9 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
   @override
   void initState() {
     super.initState();
+
+    getThemeVal();
+
     checkConnectivity();
     getBookmarkList();
     playlistModelList = List<PlaylistModel>();
@@ -61,6 +65,24 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
     }
   }
 
+  bool _switchValue ;
+
+  setThemeval(bool _switchValue ) async {
+    SharedPreferences pref= await SharedPreferences.getInstance();
+    pref.setBool("theme", _switchValue);
+    setState(() {
+      this._switchValue = _switchValue;
+    });
+
+  }
+
+  getThemeVal() async{
+    SharedPreferences pref= await SharedPreferences.getInstance();
+    setState(() {
+      _switchValue = pref.getBool("theme");
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -68,26 +90,29 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: isConnected ? Colors.transparent : Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+    return MaterialApp(
+      theme:_switchValue? ThemeData.light():ThemeData.dark(),
+      home: Scaffold(
+        //backgroundColor: isConnected ? Colors.transparent : Colors.white,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back,/* color: Colors.white*/),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text('My Playlist'),
         ),
-        title: Text('My Playlist'),
+        body: isConnected
+            ? buildList()
+            : Center(
+                child: Text(
+                'No Internet Connection',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                  fontSize: 20,
+                ),
+              )),
       ),
-      body: isConnected
-          ? buildList()
-          : Center(
-              child: Text(
-              'No Internet Connection',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-                fontSize: 20,
-              ),
-            )),
     );
   }
 
@@ -140,12 +165,12 @@ class _MusicPlaylistState extends State<MusicPlaylist> {
                       Text(
                         playlistModelList[index].trackName,
                         style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w800),
+                            /*color: Colors.white,*/ fontWeight: FontWeight.w800),
                       ),
                       Text(
                         '- (${playlistModelList[index].albumName})',
                         style: TextStyle(
-                            color: Colors.white70, fontWeight: FontWeight.w500),
+                            /*color: Colors.white70,*/ fontWeight: FontWeight.w500),
                       ),
                       SizedBox(
                         height: 5,
