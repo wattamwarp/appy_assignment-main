@@ -199,9 +199,14 @@ class _MusicListState extends State<MusicList> {
                       SizedBox(
                         height: 5,
                       ),
-                      Text(
-                        'Artist - ${snapshot.data.results[index].artistName}',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      Container(
+                        width: MediaQuery.of(context).size.width - 80,
+                        child: Text(
+                          'Artist - ${snapshot.data.results[index].artistName}',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
                     ],
                   ),
